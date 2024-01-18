@@ -100,6 +100,8 @@
 #include <simdpp/core/permute4.h>
 #include <simdpp/core/permute_bytes16.h>
 #include <simdpp/core/permute_zbytes16.h>
+#include <simdpp/core/slli.h>
+#include <simdpp/core/srli.h>
 #include <simdpp/core/set_splat.h>
 #include <simdpp/core/shuffle1.h>
 #include <simdpp/core/shuffle2.h>
