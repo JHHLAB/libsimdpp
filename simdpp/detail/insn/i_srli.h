@@ -40,18 +40,19 @@ int16x8 i_srli(const int16x8& a, unsigned count)
 #if SIMDPP_USE_NULL
     return detail::null::shift_r(a, count);
 #elif SIMDPP_USE_SSE2
-    return _mm_sra_epi16(a.native(), _mm_cvtsi32_si128(count));
+    return _mm_srli_si128(a.native(), count);
 #elif SIMDPP_USE_NEON
-    int16x8 shift = splat(-int(count));
-    return vshlq_s16(a.native(), shift.native());
+    int16x8 shift = vdupq_n_s16(static_cast<int>(count));
+    return vshlq_s16(a.native(), shift);
 #elif SIMDPP_USE_ALTIVEC
-    uint16x8 shift = splat(count);
-    return vec_sra(a.native(), shift.native());
+    uint16x8 shift = vec_splats(static_cast<int>(count));
+    return vec_sra(a.native(), shift);
 #elif SIMDPP_USE_MSA
-    int16x8 shift = splat(count);
+    int16x8 shift = vdupq_n_s16(static_cast<int>(count));
     return __msa_sra_h(a.native(), shift.native());
 #endif
 }
+
 
 #if SIMDPP_USE_AVX2
 static SIMDPP_INL
@@ -70,15 +71,15 @@ int32x4 i_srli(const int32x4& a, unsigned count)
 #if SIMDPP_USE_NULL
     return detail::null::shift_r(a, count);
 #elif SIMDPP_USE_SSE2
-    return _mm_sra_epi32(a.native(), _mm_cvtsi32_si128(count));
+    return _mm_srli_si128(a.native(), count);
 #elif SIMDPP_USE_NEON
-    int32x4 shift = splat(-int(count));
-    return vshlq_s32(a.native(), shift.native());
+    int32x4 shift = vdupq_n_s32(static_cast<int>(count));
+    return vshlq_s32(a.native(), shift);
 #elif SIMDPP_USE_ALTIVEC
-    uint32x4 shift = splat(count);
-    return vec_sra(a.native(), shift.native());
+    uint32x4 shift = vec_splats(static_cast<int>(count));
+    return vec_sra(a.native(), shift);
 #elif SIMDPP_USE_MSA
-    int32x4 shift = splat(count);
+    int32x4 shift = vdupq_n_s32(static_cast<int>(count));
     return __msa_sra_w(a.native(), shift.native());
 #endif
 }
@@ -106,18 +107,19 @@ V i_srli(const V& a, unsigned count)
 template<unsigned count> SIMDPP_INL
 int16x8 i_srli(const int16x8& a)
 {
-    static_assert(count < 16, "Shift out of bounds");
 #if SIMDPP_USE_NULL
     return detail::null::shift_r(a, count);
 #elif SIMDPP_USE_SSE2
-    return _mm_srai_epi16(a.native(), count);
+    return _mm_srli_si128(a.native(), count);
 #elif SIMDPP_USE_NEON
-    return vshrq_n_s16(a.native(), count);
+    int16x8 shift = vdupq_n_s16(static_cast<int>(count));
+    return vshlq_s16(a.native(), shift);
 #elif SIMDPP_USE_ALTIVEC
-    uint16x8 shift = make_uint(count);
-    return vec_sra(a.native(), shift.native());
+    uint16x8 shift = vec_splats(static_cast<int>(count));
+    return vec_sra(a.native(), shift);
 #elif SIMDPP_USE_MSA
-    return __msa_srai_h(a.native(), count);
+    int16x8 shift = vdupq_n_s16(static_cast<int>(count));
+    return __msa_sra_h(a.native(), shift.native());
 #endif
 }
 
@@ -134,19 +136,19 @@ int16x16 i_srli(const int16x16& a)
 template<unsigned count> SIMDPP_INL
 int32x4 i_srli(const int32x4& a)
 {
-    static_assert(count < 32, "Shift out of bounds");
 #if SIMDPP_USE_NULL
-    return i_srli(a, count);
+    return detail::null::shift_r(a, count);
 #elif SIMDPP_USE_SSE2
-    printf("here for two\n");
-    return _mm_srai_epi32(a.native(), count);
+    return _mm_srli_si128(a.native(), count);
 #elif SIMDPP_USE_NEON
-    return vshrq_n_s32(a.native(), count);
+    int32x4 shift = vdupq_n_s32(static_cast<int>(count));
+    return vshlq_s32(a.native(), shift);
 #elif SIMDPP_USE_ALTIVEC
-    uint32x4 shift = make_uint(count);
-    return vec_sra(a.native(), shift.native());
+    uint32x4 shift = vec_splats(static_cast<int>(count));
+    return vec_sra(a.native(), shift);
 #elif SIMDPP_USE_MSA
-    return __msa_srai_w(a.native(), count);
+    int32x4 shift = vdupq_n_s32(static_cast<int>(count));
+    return __msa_sra_w(a.native(), shift.native());
 #endif
 }
 

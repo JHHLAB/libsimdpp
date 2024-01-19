@@ -72,16 +72,16 @@ int32x4 i_slli(const int32x4& a, unsigned count)
 #if SIMDPP_USE_NULL
     return detail::null::shift_r(a, count);
 #elif SIMDPP_USE_SSE2
-    return _mm_sra_epi32(a.native(), _mm_cvtsi32_si128(count));
+    return _mm_slli_si128(a.native(), count);
 #elif SIMDPP_USE_NEON
-    int32x4 shift = splat(-int(count));
-    return vshlq_s32(a.native(), shift.native());
+    int32x4 shift = vdupq_n_s32(-static_cast<int>(count));
+    return vshlq_s32(a.native(), shift);
 #elif SIMDPP_USE_ALTIVEC
-    uint32x4 shift = splat(count);
-    return vec_sra(a.native(), shift.native());
+    vector int32_t shift = vec_splats(static_cast<int>(count));
+    return vec_sl(a.native(), shift);
 #elif SIMDPP_USE_MSA
-    int32x4 shift = splat(count);
-    return __msa_sra_w(a.native(), shift.native());
+    v4i32 shift = __msa_fill_w(static_cast<int>(count));
+    return __msa_sll_w(a.native(), shift);
 #endif
 }
 
@@ -140,18 +140,20 @@ int16x16 i_slli(const int16x16& a)
 template<unsigned count> SIMDPP_INL
 int32x4 i_slli(const int32x4& a)
 {
+
 #if SIMDPP_USE_NULL
-    return i_slli(a, count);
+    return detail::null::shift_r(a, count);
 #elif SIMDPP_USE_SSE2
-    printf("here for two\n");
-    return _mm_srai_epi32(a.native(), count);
+    return _mm_slli_si128(a.native(), count);
 #elif SIMDPP_USE_NEON
-    return vshrq_n_s32(a.native(), count);
+    int32x4 shift = vdupq_n_s32(-static_cast<int>(count));
+    return vshlq_s32(a.native(), shift);
 #elif SIMDPP_USE_ALTIVEC
-    uint32x4 shift = make_uint(count);
-    return vec_sra(a.native(), shift.native());
+    vector int32_t shift = vec_splats(static_cast<int>(count));
+    return vec_sl(a.native(), shift);
 #elif SIMDPP_USE_MSA
-    return __msa_srai_w(a.native(), count);
+    v4i32 shift = __msa_fill_w(static_cast<int>(count));
+    return __msa_sll_w(a.native(), shift);
 #endif
 }
 
